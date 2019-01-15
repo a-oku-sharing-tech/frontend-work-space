@@ -12,8 +12,8 @@ srcディレクトリをwatchする
 
 ## 設定方法
 
-② node.jsをインストール
-③ npmをインストール
-④ `$ dir workSpace` workSpaceディレクトリに移動する
-⑤ `$ npm i`
-⑥ `$ npm gulp -v` 実行したら `6.4.1` のような情報が出れば完了
+- node.jsをインストール
+- npmをインストール
+- `$ dir workSpace` workSpaceディレクトリに移動する
+- `$ npm i`
+- `$ npm gulp -v` 実行したら `6.4.1` のような情報が出れば完了
