@@ -13,6 +13,11 @@ const imageminWebp = require('imagemin-webp');
 const webp = require('gulp-webp');
 
 const sass = require('gulp-sass');
+const sourcemaps = require('gulp-sourcemaps');
+const autoprefixer = require('gulp-autoprefixer');
+
+const babel = require('gulp-babel');
+const minify = require("gulp-babel-minify");
 
 // 圧縮前と圧縮後のディレクトリを定義
 const paths = {
@@ -50,7 +55,7 @@ gulp.task('webp', function(){
 	});
 });
 // 画像のwatch
-gulp.task('watch', () => {
+gulp.task('watch:img', () => {
 	return gulp.watch(paths.srcDir + '/img/**/*.{jpg,png}', gulp.parallel('imgMin','webp'));
 });
 
@@ -63,18 +68,39 @@ gulp.task('sass', function () {
 
 		// style.scssファイルを取得
 		return gulp.src('src/css/*.scss')
-		// Sassのコンパイルを実行
+		.pipe(sourcemaps.init())
 		.pipe(sass({
 		// outputStyle: 'expanded'
 		outputStyle: 'compressed'
 		})
-		// Sassのコンパイルエラーを表示
+		// Sassのコンパイルエラーを表示s
 		// (これがないと自動的に止まってしまう)
 		.on('error', sass.logError))
-		// cssフォルダー以下に保存
+		.pipe(sourcemaps.write())
+		.pipe(sourcemaps.write({includeContent: false}))
+		.pipe(sourcemaps.init({loadMaps: true}))
+		.pipe(autoprefixer(['last 2 versions', '> 1%', 'ie >= 10']))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest('dist/css'));
 	});
 });
 
+// ES2015 -> ES5
+gulp.task('js', (callback) => {
+	gulp.src('src/js/*.js') // 読み込むファイル
+		.pipe(sourcemaps.init())
+		.pipe(babel()) // babelを実行
+		.pipe(sourcemaps.write())
+		.pipe(sourcemaps.write({includeContent: false}))
+		.pipe(sourcemaps.init({loadMaps: true}))
+		.pipe(minify())
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('dist/js')); // 出力先
+		callback();
+});
+gulp.task('watch:js', () => {
+	return gulp.watch('src/js/*.js',gulp.parallel('js'));
+});
 
-gulp.task('default',gulp.parallel('sass','watch'));
+
+gulp.task('default',gulp.parallel('sass','watch:js','watch:img'));
