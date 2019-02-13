@@ -9,6 +9,7 @@
 srcディレクトリをwatchする
 + jpg|png を圧縮 +webp 作成
 + scss のビルド
++ js ES6 -> ES5
 
 ## 設定方法
 
